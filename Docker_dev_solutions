@@ -1,0 +1,115 @@
+Part 0
+
+    Ensure that you have docker setup on your local machine. The goal of
+    this assignment is to guide you through a typical development setup
+    using docker.
+    
+
+Part 1: Setup
+
+    Setup a empty git repo. This will be the main workspace for this
+    assignment.
+
+    Choose any reasonably new Linux docker image from docker
+    hub.
+
+
+Part 2: Use docker-compose
+
+    Use docker-compose to start a container that:
+
+        map the current repository to /workspace/repo;
+
+        does not exit, so that you can exec "in" and work with it.
+
+sudo docker compose run -itd first_service sh
+
+Dockerfile
+
+FROM python:3
+WORKDIR /workspace/repo
+RUN pip3 install matplotlib
+CMD ["python","./random.py"]
+
+docker-compose.yaml
+
+version: "2.6"
+services:
+  first_service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes: 
+     - .:/workspace/repo
+     
+     
+
+Part 3: Develop a python program
+
+    Write a python program and store it in the same workspace. This
+    program should generate 10 random numbers and plot it using
+    matplotlib.
+
+Make sure that you can run this program "from inside" the docker
+container.
+
+#python_file
+
+import random
+from matplotlib import pyplot as plt
+
+randomlist = []
+
+for i in range(0,10):
+    n = random.random()    
+    randomlist.append(n)
+
+print(randomlist)
+
+plt.plot(randomlist)
+plt.show()
+
+#terminal_commands
+
+docker exec -i -t <container_id_or_name> sh
+
+#sudo apt-get install python 3
+#python 3 random.py 
+
+
+
+
+Part 4: Build a docker image using Dockerfile
+
+    Make sure that the docker image you chose does not have matplotlib
+    installed. Write a dockerfile that installs all missing dependencies
+    and redo part 3.
+
+    This time, you should be able to run the Python script without having
+    to install matplotlib.
+
+    Solution in Part 2
+
+Part 5: Build a "runnable" Dockerfile
+
+    Write a Dockerfile to create a docker image that upon running, starts
+    the Python program automatically.
+    End state:
+        The graph should be visible from within the docker container;
+        The container does not exit without user input
+
+
+#runnable_docker_file
+
+FROM python:latest
+
+#to COPY the remote file at working directory in container
+COPY random.py ./
+
+#CMD instruction should be used to run the software
+#contained by your image, along with any arguments.
+
+CMD [ "python", "./random.py"]
+
+#docker_command
+docker image build -t python:0.0.1 /home/anshulgupta/Desktop/Docker/docker_dev/pyopener

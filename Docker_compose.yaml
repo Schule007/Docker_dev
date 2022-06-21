@@ -1,0 +1,14 @@
+
+version: "2.6"
+services:
+  service-1:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes: 
+     - .:/workspace/repo
+
+  service-2:
+    image: alpine:latest
+    volumes: 
+     - .:/workspace/repo
